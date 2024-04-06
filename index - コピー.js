@@ -13,12 +13,12 @@ app.use(express.urlencoded({extended: true}));
 app.use(express.json()); 
 
 
-app.listen(1208, () => console.log('Example app listening on port 1208!'));
+app.listen(5022, () => console.log('Example app listening on port 5022!'));
 
 app.post('/update', (req, res) => {
   const body = req.body;
   console.log(body);
-  const db = new sqlite3.Database(`${__dirname}/database/${body.name}`);
+  const db = new sqlite3.Database(`${__dirname}/database/${body.databaseName}.db`);
   db.serialize(() => {
     db.run(body.sql);
     res.json({result: 'successful'});
@@ -29,25 +29,12 @@ app.post('/update', (req, res) => {
 app.post('/select', (req, res) => {
   const body = req.body;
   console.log(body);
-  const db = new sqlite3.Database(`${__dirname}/database/${body.name}`);
+  const db = new sqlite3.Database(`${__dirname}/database/${body.databaseName}.db`);
   db.serialize(() => {
     db.all(req.body.sql, (err, rows) => {
       console.log(err);
       res.json(rows);
     });
-  });
-  db.close();
-});
-
-app.post('/transaction', (req, res) => {
-  const body = req.body;
-  console.log(body);
-  const db = new sqlite3.Database(`${__dirname}/database/${body.name}`);
-  db.serialize(() => {
-    body.sqlList.forEach(sql => {
-        db.run(sql);
-    });
-    res.json({result: 'successful'});
   });
   db.close();
 });
